@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src='/socket.io/socket.io.js'></script>
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		// this triggers the connection event in our server!
+    		var socket = io.connect();
+            var name = prompt('what is your name??');
+            socket.emit('new_user', {name: name})
+            $('form').submit(function (){
+                var message= $("input[name = 'message'").val();
+                socket.emit('new_message', {name: name,message: message})
+                return false;
+            })
+            socket.on('all_messages',function (data){
+                message = {name: data.name, message: data.message}
+                console.log(message);
+                $('#chat').append("<p>"+message.name+": "+message.message+"</p>")
+            })
+    		// MAKE MY OWN BOX BY HAND!
+    		
+    	})
+    </script>
+    <style type="text/css">
+        div{
+            border: 1px solid black;
+            width:700px;
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Conversation Board</h1>
+    <div id='chat'></div><br><br>
+    <form>
+        <input name = 'message' type='text' placeholder='enter your message here...'><br><br>
+        <input type='submit' value='Send'>
+    </form>
+  </body>
+</html>
